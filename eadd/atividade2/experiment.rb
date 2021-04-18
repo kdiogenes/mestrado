@@ -27,7 +27,11 @@ end
   file = File.new("inputs/exp_2_#{exp}.txt")
   input = []
   file.each { |line| input << line.to_i }
+
+  start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
   ordered_input = input.sort
+  finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+  ordered_time = finish - start
   
   results[:sequential][exp] ||= []
   results[:sequential_optimized][exp] ||= []
@@ -39,13 +43,13 @@ end
     results[:sequential][exp] << { position: position, elapsed_time: elapsed_time }
 
     position, elapsed_time = measuring_time { ordered_input.optimized_sequential_search(search_values[i]) }
-    results[:sequential_optimized][exp] << { position: position, elapsed_time: elapsed_time }
+    results[:sequential_optimized][exp] << { position: position, elapsed_time: elapsed_time, ordered_time: ordered_time }
 
     position, elapsed_time = measuring_time { ordered_input.jump_search(search_values[i]) }
-    results[:jump_search][exp] << { position: position, elapsed_time: elapsed_time }
+    results[:jump_search][exp] << { position: position, elapsed_time: elapsed_time, ordered_time: ordered_time }
 
     position, elapsed_time = measuring_time { ordered_input.binary_search(search_values[i]) }
-    results[:binary_search][exp] << { position: position, elapsed_time: elapsed_time }
+    results[:binary_search][exp] << { position: position, elapsed_time: elapsed_time, ordered_time: ordered_time }
   end
 end
 

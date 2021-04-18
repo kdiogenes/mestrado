@@ -4,6 +4,8 @@ require "json"
 
 results = JSON.parse(File.open("outputs/experiment_generated_data.txt").read)
 
+order_time = []
+
 means = {
   seq: [],
   seq_opt: [],
@@ -64,6 +66,8 @@ not_found = {
 }
 
 (10..27).each do |exp|
+  order_time << results["sequential_optimized"][exp.to_s][0]["ordered_time"]
+
   means[:seq] << results["sequential"][exp.to_s].sum { |result| result["elapsed_time"] } / 100
   means[:seq_opt] << results["sequential_optimized"][exp.to_s].sum { |result| result["elapsed_time"] } / 100
   means[:jump] << results["jump_search"][exp.to_s].sum { |result| result["elapsed_time"] } / 100
@@ -89,6 +93,7 @@ not_found = {
   end
 end
 
+p order_time
 p means.deep_transform_values { |value| value.is_a?(Numeric) ? value.to_d.to_s('F') : value }
 p dps.deep_transform_values { |value| value.is_a?(Numeric) ? value.to_d.to_s('F') : value }
 p first_10.deep_transform_values { |value| value.is_a?(Numeric) ? value.to_d.to_s('F') : value }
